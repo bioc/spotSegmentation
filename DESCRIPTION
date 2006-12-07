@@ -1,6 +1,6 @@
 Package: 	spotSegmentation
-Version: 1.6.0
-Date:           2005-01-14
+Version: 1.9.0
+Date:           2005-12-07
 Author: 	Qunhua Li, Chris Fraley, Adrian Raftery
                 Department of Statistics, University of Washington
 Title: 		Microarray Spot Segmentation and 
