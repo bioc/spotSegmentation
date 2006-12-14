@@ -12,7 +12,8 @@ Description: 	Spot segmentation via model-based clustering and
                 no. 473, Department of Statistics, University of Washington.
 Depends:	R (>= 1.7.0), mclust 
 Note:           mclust package not needed for gridding
-License: 	GPL version 2 or higher
+License: 	GPL version 2 or higher + mclust license
+                http://www.stat.washington.edu/mclust/license.txt
 Maintainer: 	Chris Fraley <fraley@stat.washington.edu>
 URL:		http://www.stat.washington.edu/fraley
 Packaged: Wed May 18 22:54:29 2005; biocbuild
