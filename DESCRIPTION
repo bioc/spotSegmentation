@@ -15,6 +15,5 @@ Note:           mclust package not needed for gridding
 License: 	GPL version 2 or higher
 Maintainer: 	Chris Fraley <fraley@stat.washington.edu>
 URL:		http://www.stat.washington.edu/fraley
-Packaged: Wed May 18 22:54:29 2005; biocbuild
 biocViews: Microarray, TwoChannel, QualityControl, Preprocessing
 
