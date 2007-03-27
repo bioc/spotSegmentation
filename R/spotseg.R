@@ -105,196 +105,6 @@ function (chan1, chan2, rowcut, colcut, R = NULL, C = NULL, threshold = 100,
             for (i in I) binaryImage[binaryImage == tbl[i]] <- i
             binaryImage
         }
-        EMclust1 <- function(data, G, eps, tol, itmax, warnSingular = FALSE, 
-            ...) {
-            equalPro <- FALSE
-            dimData <- dim(data)
-            oneD <- is.null(dimData) || length(dimData[dimData > 
-                1]) == 1
-            if (!oneD) 
-                stop("data must be a vector")
-            if (missing(eps)) 
-                eps <- .Mclust$eps
-            if (missing(tol)) 
-                tol <- .Mclust$tol
-            if (missing(itmax)) 
-                itmax <- .Mclust$itmax
-            itmax[is.infinite(itmax)] <- .Machine$integer.max
-            data <- as.vector(data)
-            n <- length(data)
-            p <- 1
-            emModelNames <- c("E", "V")
-            m <- length(emModelNames)
-            if (missing(G)) {
-                G <- 1:9
-            }
-            else {
-                G <- sort(G)
-            }
-            if (any(G) <= 0) 
-                stop("G must be positive")
-            l <- length(G)
-            Glabels <- as.character(G)
-            BIC <- matrix(0, nrow = l, ncol = m, dimnames = list(Glabels, 
-                emModelNames))
-            maxG <- max(G)
-            paramList <- rep(list(list(E = list(mu = rep(0, maxG), 
-                sigmasq = 0, pro = rep(0, maxG)), V = list(mu = rep(0, 
-                maxG), sigmasq = rep(0, maxG), pro = rep(0, maxG)))), 
-                nrow(BIC))
-            names(paramList) <- Glabels
-            if (G[1] == 1) {
-                for (modelName in emModelNames) {
-                  mle <- mvn(modelName = modelName, data = data)
-                  BIC[1, modelName] <- bic(modelName = modelName, 
-                    loglik = mle$loglik, n = n, d = p, G = 1, 
-                    equalPro = equalPro)
-                  paramList[[1]][[modelName]] <- c(mle[c("mu", 
-                    "sigmasq")], list(pro = 1))
-                }
-                G <- G[-1]
-                Glabels <- Glabels[-1]
-            }
-            if (l > 1) {
-                for (i in seq(along = G)) {
-                  k <- G[i]
-                  cl <- rep(0, length(data))
-                  Q <- quantile(data, probs = (0:k)/k)
-                  Q[1] <- Q[1] - 1
-                  for (j in 1:k) cl[data > Q[j] & data <= Q[j + 
-                    1]] <- j
-                  z <- unmap(cl)
-                  for (modelName in emModelNames) {
-                    mle <- me(modelName = modelName, data = data, 
-                      z = z, eps = eps, tol = tol, itmax = itmax, 
-                      equalPro = equalPro, warnSingular = warnSingular)
-                    BIC[Glabels[i], modelName] <- bic(modelName = modelName, 
-                      loglik = mle$loglik, n = n, d = p, G = G[i], 
-                      equalPro = equalPro)
-                    paramList[[Glabels[i]]][[modelName]] <- mle[c("mu", 
-                      "sigmasq", "pro")]
-                  }
-                }
-            }
-            structure(BIC, eps = eps, tol = tol, itmax = itmax, 
-                warnSingular = warnSingular, paramList = paramList, 
-                args = as.list(match.call())[-1], class = "EMclust1")
-        }
-        summary.EMclust1 <- function(object, data, G, modelNames, 
-            ...) {
-            x <- object
-            paramList <- attr(object, "paramList")
-            n <- if (is.null(dimData <- dim(data))) 
-                length(data)
-            else dimData[1]
-            eps <- attr(x, "eps")
-            tol <- attr(x, "tol")
-            itmax <- attr(x, "itmax")
-            equalPro <- attr(x, "equalPro")
-            warnSingular <- attr(x, "warnSingular")
-            class(x) <- attr(x, "args") <- attr(x, "warnSingular") <- NULL
-            if (missing(G)) {
-                G <- as.numeric(dimnames(x)[[1]])
-            }
-            else {
-                G <- sort(G)
-            }
-            Glabels <- as.character(G)
-            if (missing(modelNames)) 
-                modelNames <- dimnames(x)[[2]]
-            x <- x[Glabels, modelNames, drop = FALSE]
-            X <- is.na(x)
-            if (all(X)) 
-                stop("none of the selected models could be fitted")
-            x[X] <- -.Machine$double.xmax
-            l <- nrow(x)
-            m <- ncol(x)
-            best <- max(x)
-            rowsBest <- (matrix(rep(1:l, m), l, m)[x == best])[1]
-            colsBest <- (matrix(rep(1:m, rep(l, m)), l, m)[x == 
-                best])[1]
-            namesBest <- dimnames(x[rowsBest, colsBest, drop = FALSE])
-            bestG <- namesBest[[1]]
-            maxG <- max(G)
-            minG <- min(G)
-            if (minG != maxG) {
-                if (bestG == maxG) {
-                }
-                else if (minG != 1 && bestG == min(G)) {
-                }
-            }
-            bestModel <- namesBest[[2]]
-            if (min(l, m) > 1) {
-                M <- modelNames[modelNames != bestModel]
-                y <- x[, M]
-                other <- max(y)
-                otherG <- (matrix(rep(Glabels, m - 1), l, m - 
-                  1)[y == other])[1]
-                otherModel <- (matrix(rep(M, rep(l, m - 1)), 
-                  l, m - 1)[y == other])[1]
-                y <- x[, bestModel]
-                w <- y[y != best]
-                if (length(w) == l - 1) {
-                  same <- max(w)
-                  sameG <- (Glabels[y == same])[1]
-                }
-                else {
-                  same <- best
-                  sameG <- (Glabels[y == same])[2]
-                }
-                nam1 <- paste(bestModel, bestG, sep = ",")
-                nam2 <- paste(bestModel, sameG, sep = ",")
-                nam3 <- paste(otherModel, otherG, sep = ",")
-                bestBICs <- c(nam1 = best, nam2 = same, nam3 = other)
-                names(bestBICs) <- c(nam1, nam2, nam3)
-            }
-            else if (l != 1) {
-                w <- x[x != best]
-                if (length(w) == l - 1) {
-                  same <- max(w)
-                  sameG <- (Glabels[x == same])[1]
-                }
-                else {
-                  same <- best
-                  sameG <- (Glabels[x == same])[2]
-                }
-                nam1 <- paste(bestModel, bestG, sep = ",")
-                nam2 <- paste(bestModel, sameG, sep = ",")
-                bestBICs <- c(nam1 = best, nam2 = same)
-                names(bestBICs) <- c(nam1, nam2)
-            }
-            else if (m != 1) {
-                M <- (1:m)[modelNames == bestModel]
-                y <- x[, -M]
-                other <- max(y)
-                otherG <- (matrix(rep(Glabels, m - 1), l, m - 
-                  1)[y == other])[1]
-                otherModel <- (matrix(rep(modelNames[-M], rep(l, 
-                  m - 1)), l, m - 1)[y == other])[1]
-                nam1 <- paste(bestModel, bestG, sep = ",")
-                nam3 <- paste(otherModel, otherG, sep = ",")
-                bestBICs <- c(best, other)
-                names(bestBICs) <- c(nam1, nam3)
-            }
-            else {
-                nam1 <- paste(bestModel, bestG, sep = ",")
-                bestBICs <- best
-                names(bestBICs) <- nam1
-            }
-            bestBICs[bestBICs == -.Machine$double.xmax] <- NA
-            out <- paramList[[bestG]][[bestModel]]
-            if (as.numeric(bestG) == 1) {
-                structure(c(list(bic = bestBICs, G = bestG, classification = rep(1, 
-                  n), uncertainty = rep(0, n)), out), class = "summary.EMclust1")
-            }
-            else {
-                z <- do.call("estep", c(list(data = data, modelName = bestModel), 
-                  out))$z
-                structure(c(list(bic = bestBICs, G = bestG, classification = map(z), 
-                  uncertainty = 1 - apply(z, 1, max), modelName = bestModel), 
-                  out), class = "summary.EMclust1")
-            }
-        }
         plotSpotImage <- function(z, col = NULL, title = NULL, 
             one = FALSE) {
             if (is.null(col)) 
@@ -338,14 +148,14 @@ function (chan1, chan2, rowcut, colcut, R = NULL, C = NULL, threshold = 100,
                 one = TRUE)
         spot <- as.matrix(spot)
         if (hc) {
-            BIC <- EMclust(as.vector(spot), G = 1:3, hcPairs = hc(modelName = "E", 
-                data = as.vector(spot)))
+            BIC <- mclustBIC(as.vector(spot), G = 1:3, 
+            initialization = list(hcPairs = hcE(data = as.vector(spot))))
         }
         else {
-            BIC <- EMclust1(as.vector(spot), G = 1:3)
+            BIC <- mclustBIC(as.vector(spot), G = 1:3)
         }
-        spot[] <- orderBYmean(summary(BIC, data = as.vector(spot)), 
-            q)$cl
+        spot[] <- orderBYmean(summary(BIC, 
+                              data = as.vector(spot)), q)$cl
         G <- max(as.vector(spot))
         K <- unique(as.vector(spot))
         G <- length(K)
