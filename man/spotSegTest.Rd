@@ -36,7 +36,7 @@ of the following data archive:\\
 \url{http://expression.microslu.washington.edu/expression/vantwoutjvi2002.html}
 }
 \references{
-{van't Wout} AB, Lehrman GK, Mikheeva SA, O'Keeffe GC, Katze MG, Bumgarner RE, 
+van't Wout AB, Lehrman GK, Mikheeva SA, O'Keeffe GC, Katze MG, Bumgarner RE, 
 Geiss GK, Mullins JI\\
 Cellular gene expression upon human immunodeficiency virus type 1 infection of CD4(+)-T-cell lines.\\
 \emph{J Virol.} 2003 Jan;77(2):1392-402. 

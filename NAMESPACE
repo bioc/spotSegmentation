@@ -1,2 +1,1 @@
-export( spotseg, spotgrid, plotBlockImage)
-import( mclustBIC, mclust)
+export(spotseg, spotgrid, plotBlockImage)
