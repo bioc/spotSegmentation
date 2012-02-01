@@ -1,5 +1,5 @@
 Package: spotSegmentation
-Version: 1.29.0
+Version: 1.29.1
 Author: Qunhua Li, Chris Fraley, Adrian Raftery
         Department of Statistics, University of Washington
 Title: Microarray Spot Segmentation and Gridding for Blocks of Microarray Spots
@@ -7,7 +7,7 @@ Description: Spot segmentation via model-based clustering and gridding for
              blocks within microarray slides, as described in Li et al, Robust
              Model-Based  Segmentation of Microarray Images, Technical Report
              no. 473, Department of Statistics, University of Washington.
-Depends: R (>= 1.7.0), mclust
+Depends: R (>= 2.10), mclust
 Note: mclust package not needed for gridding
 License: GPL (>= 2)
 Maintainer: Chris Fraley <fraley@stat.washington.edu>
