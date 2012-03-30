@@ -1,5 +1,5 @@
 Package: spotSegmentation
-Version: 1.29.1
+Version: 1.30.0
 Author: Qunhua Li, Chris Fraley, Adrian Raftery
         Department of Statistics, University of Washington
 Title: Microarray Spot Segmentation and Gridding for Blocks of Microarray Spots
