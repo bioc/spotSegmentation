@@ -2,6 +2,14 @@
 function (chan1, chan2, rowcut, colcut, R = NULL, C = NULL, threshold = 100, 
     hc = FALSE, show = FALSE) 
 {
+   vecnorm <-function(x) {
+      xmax <- max(abs(x))
+      if (is.na(xmax)) return(NA)
+      if (xmax == 0) return(0)
+      z <- x/xmax
+      xmax * sqrt(sum(z*z))
+    }
+
     spotseg1 <- function(spot, i, j, threshold = 100, ccl = TRUE, 
         hc = FALSE, show = FALSE) {
         dis <- function(spot, k) {
