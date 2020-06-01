@@ -1,5 +1,5 @@
 Package: spotSegmentation
-Version: 1.63.0
+Version: 1.63.1
 Author: Qunhua Li, Chris Fraley, Adrian Raftery
         Department of Statistics, University of Washington
 Title: Microarray Spot Segmentation and Gridding for Blocks of Microarray Spots
@@ -13,3 +13,4 @@ License: GPL (>= 2)
 Maintainer: Chris Fraley <fraley@stat.washington.edu>
 URL: http://www.stat.washington.edu/fraley
 biocViews: Microarray, TwoChannel, QualityControl, Preprocessing
+PackageStatus: Deprecated
